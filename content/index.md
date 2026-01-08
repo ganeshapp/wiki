@@ -1,6 +1,5 @@
 ---
-title: Welcome to Quartz
+title: Gapp's Wiki
 ---
 
-This is a blank Quartz installation.
-See the [documentation](https://quartz.jzhao.xyz) for how to get started.
+The purpose of this wiki is purely to collect all the info when I go on one of those deep rabbit holes on some random topic. 
