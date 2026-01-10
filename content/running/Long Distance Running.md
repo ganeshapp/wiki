@@ -1,5 +1,7 @@
 ---
 title: Long Distance Running
+tags:
+  - seed
 ---
 
 Running long distance is probably the second best way (after swimming) to have a great cardiovascular health. 
