@@ -1,5 +1,5 @@
 ---
-title: Interesting Wikis
+title: Interesting Digital Gardens
 ---
 - [Eilleen's (online!) Everything Notebook](https://quartz.eilleeenz.com/)
 - [Ellie’s Notes](https://ellie.wtf/)
