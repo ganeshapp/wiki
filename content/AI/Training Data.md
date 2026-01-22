@@ -5,6 +5,8 @@ tags: sapling
 
 One of the most shocking graphs currently is the [Stack Overflow's questions created per month](https://data.stackexchange.com/stackoverflow/query/1926661#graph). 
 
+asdfasdfafd
+
 ![](../assets/Pasted%20image%2020260108233330.png)
 
 So LLMs got pretty good at coding not just by reviewing code, but also by understanding how humans request. And Stackoverflow also has those edge cases and human creativity to find a workaround those edge cases. 
