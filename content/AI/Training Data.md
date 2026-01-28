@@ -3,9 +3,7 @@ title: Training Data
 tags: sapling
 ---
 
-One of the most shocking graphs currently is the [Stack Overflow's questions created per month](https://data.stackexchange.com/stackoverflow/query/1926661#graph). 
-
-asdfasdfafd
+One of the most shocking graphs currently is the [Stack Overflow's questions created per month](https://data.stackexchange.com/stackoverflow/query/1926661#graph).
 
 ![](../assets/Pasted%20image%2020260108233330.png)
 
