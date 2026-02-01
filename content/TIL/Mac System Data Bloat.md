@@ -1,3 +1,7 @@
+---
+title: Mac System Data Bloat
+---
+
 **“System Data”** on macOS is basically Apple’s **junk drawer**. It’s not one thing—it’s a grab-bag of stuff the system doesn’t neatly categorize.
 
 ![](../assets/Pasted%20image%2020260128190416.png)
