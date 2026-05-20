@@ -7,6 +7,8 @@ tags:
   - cycling
 ---
 
+![](../assets/Gemini_Generated_Image_khtpqnkhtpqnkhtp.png)
+
 The Jeju Fantasy Bicycle Path (제주환상자전거길) is a **234 km** signed bicycle route that loops the entire coast of Jeju Island. It is one of twelve national certified cycle routes built by the **Ministry of the Interior and Safety (MOIS)** and **K-Water** as part of Korea's 1,800 km **Cross-Country Cycle Network**. The same passport system that covers the Seoul → Busan 4 Rivers Path also covers this loop.
 
 "Fantasy" is a slight mistranslation of *hwansang (환상)*, which here means "ring-shaped" — the path is a giant ring around the island. It is also genuinely fantasy-like, but that is a happy coincidence.

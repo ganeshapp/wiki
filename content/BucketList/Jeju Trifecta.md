@@ -6,6 +6,8 @@ tags:
   - jeju
 ---
 
+![](../assets/Gemini_Generated_Image_6fsudk6fsudk6fsu.png)
+
 The Jeju Trifecta (sometimes called the Jeju Multi-Modal Grand Slam) is a self-styled completionist challenge that circumnavigates Jeju Island three times, once in each of three human-powered modalities:
 
 1. [[Jeju Fantasy Bike Path Challenge]] — **234 km** coastal road loop with a 10-stamp K-Water passport.

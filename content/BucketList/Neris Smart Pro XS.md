@@ -7,7 +7,9 @@ tags:
   - gear
 ---
 
-The **Neris Smart Pro XS** is the expedition-grade single-seater in Neris's catalog. Where the [[Neris Smart-1 TPU]] is the "marine hybrid bike" — light, stable, do-everything — the Pro XS is the **road bike**: narrower, faster, more efficient in every direction, but heavier on land and less forgiving for beginners.
+The **[Neris Smart Pro XS](https://nerisadventures.com/products/neris-single-seater-hybrid-folding-kayak-smart-pro-xs-expedition-edition?variant=41142750642285)** is the expedition-grade single-seater in Neris's catalog. Where the [[Neris Smart-1 TPU]] is the "marine hybrid bike" — light, stable, do-everything — the Pro XS is the **road bike**: narrower, faster, more efficient in every direction, but heavier on land and less forgiving for beginners.
+
+![](../assets/Pasted%20image%2020260520135950.png)
 
 ## Specs
 
@@ -85,6 +87,8 @@ Without the Expedition Package, the Pro XS is just a fast lake boat. With it, it
 
 ## Setup process
 
+[Assembly Guide](https://cdn.shopify.com/s/files/1/0573/2843/5309/files/neris-smart-pro-xs-assembly-manual.pdf)
+
 1. Assemble the keel + cross ribs first. The Pro XS has a more complex skeleton than the Smart-1 with extra deck stringers.
 2. Slide the frame into the skin.
 3. Tension the skin via the bow/stern locks.
@@ -121,6 +125,12 @@ Same import path as the Smart-1 — see [[Importing a Kayak to Korea]]. When ema
 - Spray deck + neoprene skirt
 - Dual conical 60 L dry bags
 - Insured DHL/FedEx air freight to Seoul
+
+![](../assets/Pasted%20image%2020260520140001.png)
+
+![](../assets/Pasted%20image%2020260520140012.png)
+
+
 
 ## Related pages
 

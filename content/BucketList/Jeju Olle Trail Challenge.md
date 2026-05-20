@@ -8,6 +8,8 @@ tags:
   - running
 ---
 
+![](../assets/Gemini_Generated_Image_bczxk8bczxk8bczx.png)
+
 The Jeju Olle Trail is a network of waymarked walking routes that wraps around the entire coast of Jeju Island, dips into the interior, and crosses out to several offshore islands. It was founded in 2007 by former journalist Suh Myung-sook after she walked the Camino de Santiago in Spain and decided Jeju deserved its own slow-walking pilgrimage. The Olle Foundation has been adding routes ever since.
 
 The name "olle" comes from the Jeju dialect — it refers to the narrow alley that connects the front door of a traditional Jeju house to the main road. Each route is meant to feel like one long olle: an intimate path between you and the island.

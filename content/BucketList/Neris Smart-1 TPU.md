@@ -7,7 +7,7 @@ tags:
   - gear
 ---
 
-The **Neris Smart-1 TPU** is a single-seater hybrid skin-on-frame kayak made by Neris (Ukrainian / Lithuanian manufacturer; previously branded *Skin Boats*). It sits at the sweet spot between **packraft-level portability** and **sea-kayak-level capability**. The TPU skin variant is the only realistic modern descendant of the discontinued Feathercraft Aironaut.
+The **[Neris Smart-1 TPU](https://nerisadventures.com/collections/all-products-kayaks-and-accessories/products/neris-one-man-foldable-kayak-smart-one?variant=41038972387437)** is a single-seater hybrid skin-on-frame kayak made by Neris (Ukrainian / Lithuanian manufacturer; previously branded *Skin Boats*). It sits at the sweet spot between **packraft-level portability** and **sea-kayak-level capability**. The TPU skin variant is the only realistic modern descendant of the discontinued Feathercraft Aironaut.
 
 ## Specs
 
@@ -25,6 +25,8 @@ The **Neris Smart-1 TPU** is a single-seater hybrid skin-on-frame kayak made by 
 | Cockpit | Sit-in; spray skirt compatible |
 
 The boat itself ships with the frame, the skin, an inflatable seat, two side sponsons (which inflate to tension the skin), and a backpack. The PFD, paddle, and pump are bought separately.
+
+![](../assets/Pasted%20image%2020260520135143.png)
 
 ## Why TPU (and not PVC)
 
@@ -70,6 +72,8 @@ See [[TPU vs PVC for Kayaks]] for the full materials breakdown.
 
 ## Setup process
 
+[Assembly Guide](https://cdn.shopify.com/s/files/1/0573/2843/5309/files/neris_smart_one_assembly_manual.pdf)
+
 1. Lay out the frame: assemble the keelson (longitudinal beam) and rib stations.
 2. Slide the frame into the open skin from the cockpit opening, like dressing a snake.
 3. Lock the frame into the skin's bow/stern pockets.
@@ -107,6 +111,12 @@ Items to source locally in Seoul rather than from Neris (shipping inefficiency):
 ## Resale market
 
 Used Smart-1 TPUs hold value remarkably well in Europe and Japan. A clean 3-year-old boat sells for ~70% of new price. The skin condition is what buyers inspect first.
+
+![](../assets/Pasted%20image%2020260520135239.png)
+
+![](../assets/Pasted%20image%2020260520135250.png)
+
+[![](https://img.youtube.com/vi/u8tplDf4Pz8/0.jpg)](https://www.youtube.com/watch?v=u8tplDf4Pz8 "Colorado river paddling on NERIS Smart-1 hybrid kayak")
 
 ## Related pages
 

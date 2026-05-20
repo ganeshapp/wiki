@@ -7,6 +7,8 @@ tags:
   - kayaking
 ---
 
+![](../assets/Gemini_Generated_Image_itao8witao8witao.png)
+
 Paddling a sea kayak around Jeju Island is the toughest of the three legs in the [[Jeju Trifecta]]. The coastline is roughly **253 km**. The Pacific swells on the south coast are exposed and unforgiving. The island's nickname is **Samdado (삼다도)** — "the island of three abundances": rocks, wind, and women — and two of those three are problems for paddlers.
 
 Unlike the bike path and the Olle Trail, there is **no official passport, no stamps, no certificate**. You finish when you finish, and the only evidence is your GPS log.
