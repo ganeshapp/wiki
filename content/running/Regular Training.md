@@ -1,4 +1,4 @@
-If the goal is to be marathon ready any day of the year, then one should build a lot of aerobic base. In places like Seoul where certain parts of the year you might not be able to run outside, it makes sense to plan the training on a treadmill. 
+If the goal is to be marathon ready any day of the year, then one should build a lot of aerobic base. See [[Lifestyle Running]] for the broader philosophy. In places like Seoul where certain parts of the year you might not be able to run outside, it makes sense to plan the training on a treadmill. 
 
 > Unlike track workout, treadmill needs some adjustment. In track training plans, distance and pace is the key. You will find training plans like 400m X 4, of run 3km at 4:15 pace etc. But this is hard to keep track of in a treadmill. In a treadmill keeping track of time and speed is easier (speed because you are the one setting it). So instead of 400m X 4, you would have something like 2 minutes X 16 km/hour or something like that. 
 
