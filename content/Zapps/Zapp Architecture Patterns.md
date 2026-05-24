@@ -5,100 +5,154 @@ tags:
   - architecture
 ---
 
-The constraints of the [[Zapp Manifesto|Zapp philosophy]] (no servers, no accounts, no tracking) rule out the standard Web 2.0 architectures. The patterns below are the recurring engineering techniques that make Zapps possible anyway.
+The constraints of the [[Zapp Manifesto|Zapp philosophy]] (no maker-owned servers, no account database, no telemetry) rule out the standard Web 2.0 architectures. The patterns below are the recurring engineering techniques that make Zapps possible anyway.
 
-## 1. Bring Your Own Key (BYOK)
+## 1. OAuth Device Flow for third-party access
 
-**Problem:** Some apps need to call third-party services (GitHub, OpenAI, Strava, Hacker News). Embedding a developer-owned API key into a public client-side app is unsafe — anyone can scrape and abuse it.
+**Problem:** Some apps need to call third-party services (GitHub, Google Drive, Strava, Spotify) on behalf of the user. The naïve options are both bad:
 
-**Solution:** The app prompts the user to supply their own Personal Access Token (PAT) or API key. The key is stored only in the user's local storage. All API calls are made directly from the client to the third party. The developer never proxies requests.
+- **Bundle a maker-owned client secret and a back-end proxy.** Violates the no-server rule, creates the rent loop, and gives the maker visibility into every user request.
+- **Ask the user to paste a Personal Access Token (PAT).** Long-lived, broad-scope, hard to revoke, and a huge onboarding wall for non-developer users.
 
-**Implications:** Users with technical literacy handle this easily. For non-technical users, generating a PAT or API key is a real onboarding hurdle — Zapps should accept that trade-off rather than try to mask it with a "convenience" backend.
+**Better solution: OAuth 2.0 Device Authorisation Grant (RFC 8628), commonly called *Device Flow*.**
+
+Originally designed for TVs and CLI tools that couldn't run a normal OAuth redirect, Device Flow works perfectly for static client-side apps. The flow:
+
+1. The Zapp registers as a public OAuth client with the third-party provider (one-time setup; no secret needed for public clients in Device Flow).
+2. When the user clicks "Connect to GitHub" inside the Zapp, the app makes a request to the provider's device-authorisation endpoint.
+3. The provider returns a `user_code` and a short `verification_uri`. The Zapp shows them to the user.
+4. The user opens the URL on any device, signs in, types the code, and approves the scopes they want to grant.
+5. The Zapp polls the token endpoint until the user finishes. It then receives a normal OAuth access token (and usually a refresh token), stored in local storage.
+
+The whole flow runs purely client-side. The maker doesn't need a backend; the third party handles the auth ceremony. The user enters their actual scoped permission set, not a god-mode PAT they had to figure out how to mint.
+
+### Why this beats PAT-pasting
+
+- **No PAT generation maze.** The user clicks one button and signs in normally.
+- **Scoped permissions.** The user sees and approves exactly which scopes the app gets.
+- **Revocable.** Tokens can be revoked from the provider's account settings without affecting other apps.
+- **Refreshable.** Long-lived refresh tokens replace short-lived access tokens automatically.
+- **No copy-paste of secrets through clipboard or screenshots.** Less spoofing risk.
+
+### Providers that support Device Flow
+
+- **GitHub** — fully supported
+- **Google** (Drive, Calendar, etc.) — supported for installed apps
+- **Microsoft** (OneDrive, Graph) — supported
+- **Atlassian** — supported
+- **Spotify, Twitch, Reddit, Discord** — supported
+
+For providers that don't support Device Flow, PKCE-based OAuth (RFC 7636) is the next best option and also works without a backend. PAT-pasting should be a last resort, used only when neither Device Flow nor PKCE is available.
 
 ## 2. The Napkin Pattern (URL state encoding)
 
 **Problem:** Sharing data between users normally requires a database to hold the shared state.
 
-**Solution:** Serialize the app's entire state to JSON, compress it (LZMA or base64), and append it to the URL hash. The receiving client decodes the URL to recreate the exact state locally.
+**Solution:** Serialise the app's state to JSON, compress it (LZMA, brotli, or base64), and append it to the URL hash. The receiving client decodes the URL to recreate the exact state locally.
 
 ```
 app.com/#state=eJyrVkrLzC1WslJQys9LTU8t...
 ```
 
-**Implications:**
+**Caveats to be honest about:**
 
-- Sharing is stateless — no server holds anyone's data.
-- Privacy is structural: each shared URL is a one-time, self-contained payload. Even if leaked, only that exact snapshot is revealed; the database is not.
-- A subtle catch: URLs may be logged by corporate firewalls and ISPs. For sensitive data, encrypt the payload client-side with a password kept *only in the URL fragment* (which never reaches the server).
+- URLs may be logged by corporate firewalls, ISPs, browser history syncs, or shared-link previews. Treat URL hashes as transmittable, not as private.
+- For sensitive payloads, encrypt the state client-side with a password kept *only in the URL fragment* (which never reaches the server). Strong, but the user has to share the password out-of-band.
+- URL length limits exist. Most browsers and proxies are fine up to ~2,000–8,000 characters. Beyond that, the pattern stops working and you need file-based sharing.
 
-Used in Back-of-the-Napkin-style calculation Zapps.
+Best used for calculation tools, charts, configurations — payloads under a few kilobytes.
 
 ## 3. The Walkie-Talkie Pattern (P2P networking)
 
-**Problem:** Real-time collaboration (multiplayer games, shared editing, voice/video) normally requires a centralised signaling server.
+**Problem:** Real-time collaboration (multiplayer games, shared editing, voice/video) normally requires a centralised signalling server.
 
-**Solution:** Treat the network like a walkie-talkie, not a cell phone. Use peer-to-peer transports and public, decentralised signaling infrastructure:
+**Solution:** Treat the network like a walkie-talkie, not a cell phone. Use peer-to-peer transports for the data channel, and either local discovery or public infrastructure for signalling:
 
 - **WebRTC over LAN** — for same-room collaboration, no internet required.
 - **Web Bluetooth** — direct device-to-device pairing.
 - **Public WebTorrent trackers** — used as a free signalling layer to introduce two peers.
-- **Public Nostr relays** — broadcast WebRTC signalling data to a public relay to find another peer.
-- **Public DHTs** — find peers via the BitTorrent network without a central server.
+- **Public Nostr relays** — broadcast WebRTC signalling data to find another peer.
 
-**Implications:** P2P comes with distance and reliability limitations, just like a real walkie-talkie. For some classes of app (live multiplayer at global scale), the Zapp model genuinely cannot compete with a server-backed approach. For local games, classroom collaboration, and family sharing, it works fine.
+**Privacy caveat the original draft missed:** public signalling networks are *public*. Anyone watching a public DHT or Nostr relay can map which peers are talking to which. If a Zapp uses this pattern for anything privacy-sensitive (private messaging, financial discussions), the metadata is visible to passive observers even though the content isn't.
 
-## 4. Git as Backend
+For most uses (a local game, a shared classroom session, a casual sketching board) this isn't a problem. For anything sensitive, P2P over LAN or a self-hosted signalling relay is the right answer.
 
-**Problem:** Browser local storage is volatile. iOS and Android will clear it when space is needed. Users who haven't exported their data recently can lose it forever.
+## 4. Cloud-storage folder sync (the simplest "sync that just works")
 
-**Solution:** Use a user-provided GitHub Personal Access Token to commit their JSON or SQLite state file directly to a private repository via the GitHub REST API.
+**Problem:** Users want their data to follow them across devices without dealing with OAuth or backups.
 
-- Every save or sync action pushes the latest state file to the user's repo.
-- The user gets free, version-controlled, cloud-backed storage that the developer doesn't pay for.
-- The user can access the same state from multiple devices by reading the latest file from their repo on load.
+**Solution:** Save state files into a folder the user has already configured for cloud sync — iCloud Drive, Google Drive, Dropbox, OneDrive. The Zapp doesn't manage the sync; the OS does.
 
-**Implications:** Same BYOK caveat — easy for developers, harder for non-technical users. For a Jekyll-style headless blog publisher Zapp this is a natural fit; for a casual game it's overkill.
+**Why this is often the best Zapp sync option:**
 
-## 5. Naked Data (open file formats only)
+- Free for the user (uses storage they already have).
+- No code from the Zapp talks to anyone's API; sync is purely the OS's job.
+- Works across desktop platforms cleanly. Mobile is trickier because OS-level file access is more restricted.
 
-**Rule:** Internal storage may be optimized (IndexedDB, Hive, SQLite WASM). The *export* must be universal.
+This is the underrated default. Many Zapps that go straight to Git-as-Backend would be better served by writing to a cloud-synced folder.
 
-A Zapp must include a one-click export to open, human-readable formats. See [[Zapp Data Formats]] for the recommended formats per data type.
+## 5. Git as Backend (heavier, more powerful)
 
-The Zapp should also actively *prompt* the user to back up periodically — "It's been 7 days, download your data" — because relying on volatile browser storage alone is fragile.
+**Problem:** Some users want versioned, structured sync with conflict resolution, and they don't want to depend on a single cloud-storage provider.
 
-## 6. Local-First Sync via OS Folders
+**Solution:** Use the user's own GitHub (or GitLab, Codeberg) account as the persistence layer. The Zapp uses OAuth Device Flow to obtain a token, then writes JSON or SQLite state files directly to a private repository via the REST API.
 
-**Problem:** Some users want continuity across devices without dealing with GitHub PATs.
+**Implications:**
 
-**Solution:** Save state files directly into a folder that's already synced by iCloud Drive, Google Drive, Dropbox, or OneDrive. The Zapp doesn't manage the sync; the OS does. The Zapp just reads and writes a file.
+- Free, versioned, multi-device cloud backup with no developer-side infrastructure.
+- The user can browse their data on the provider's web UI, edit it on a desktop git client, or migrate it by cloning the repo.
+- Slightly higher friction than OS-folder sync; lower friction than self-hosting.
+- Requires the user to have or create a GitHub-class account, but they don't need to know what a PAT is.
 
-**Implications:** Free cross-device sync for users who already use a cloud-storage service, with zero developer infrastructure.
+Good fit for blogging tools, note-taking, and anything where versioning is genuinely useful. Overkill for a calculator.
 
-## 7. Static Hosting Only
+## 6. Naked Data (open file formats only)
 
-A Zapp web app is a bundle of static files (HTML, CSS, JS, WASM) that any free static host can serve: GitHub Pages, Cloudflare Pages, Netlify free tier. No serverless functions (which can have egress charges), no databases, no auth providers.
+**Rule:** Internal storage may be optimised (IndexedDB, Hive, SQLite WASM). The *export* must be universal.
 
-Cost to scale from 1 to 1,000,000 users: $0.
+Every Zapp should include a one-click export to open, human-readable formats. See [[Zapp Data Formats]] for recommended formats per data type.
+
+The Zapp should also actively prompt the user to back up periodically — "It's been 7 days, download your data" — because relying on volatile browser storage alone is fragile. Modern iOS Safari clears IndexedDB after seven days of no interaction with the site (ITP), so an app the user opens monthly can quietly lose state.
+
+## 7. Static Hosting Only (with honest limits)
+
+A Zapp web app is a bundle of static files (HTML, CSS, JS, WASM) that any free static host can serve: GitHub Pages, Cloudflare Pages, Netlify free tier. No serverless functions, no databases, no auth providers.
+
+**Honest cost limits:**
+
+- GitHub Pages: 100 GB/month soft bandwidth limit, 1 GB site size, 10 builds/hour. Excessive use triggers manual review.
+- Cloudflare Pages: 500 builds/month on free tier, unlimited sites but with bandwidth-abuse policies.
+- Netlify: 100 GB/month bandwidth on free tier.
+
+For a popular Zapp, this is enough — most static apps are tiny and cached at edge. For a viral Zapp (millions of users in a week) the host will throttle. The honest answer in that scenario is to fall back to self-hosting on a cheap VPS or to ask users to install the app as a PWA so the static host only serves the initial load.
 
 ## 8. Offline-First as a Strict Requirement
 
-A web Zapp must work offline after first load. Implement a service worker that caches the entire app shell and all required assets. If the user lands on the page once, the app must remain usable forever even if the user later goes offline or the developer takes the site down.
+A web Zapp must work offline after first load. Implement a service worker that caches the entire app shell and all required assets. If the user lands on the page once, the app must remain usable forever, even if the user later goes offline or the developer takes the site down.
+
+**Things the page-one happy version glossed over:**
+
+- iOS Safari supports service workers but with significant limits (no background sync, push notifications are recent and limited, storage quotas).
+- Cache invalidation is genuinely hard. When the developer ships a breaking change to a data format, users on the old service worker can't read new shared payloads. Plan for migration paths.
+- "Forever" depends on the browser keeping the cache. Browsers can and do clear it. This is why backup prompts matter.
 
 ## Where Zapps cannot reach
 
-Knowing the limits is part of the discipline:
+For a fuller treatment see [[When Zapps are Wrong]]. The summary:
 
-- **Secret-dependent third-party APIs** without a BYOK alternative. Apps that need OpenAI or weather data without exposing user keys often need a backend.
-- **Massive dynamic datasets** that can't be downloaded to the client (e.g. flight aggregators searching 50GB of inventory).
-- **Reliable push notifications**, especially on iOS — these require a central server holding device tokens.
-- **Real-time global multiplayer** at scale — possible with public signalling, but unreliable.
+- **Push notifications at scale** — needs server-held device tokens.
+- **Search-heavy apps over huge datasets** — can't ship the data to the client.
+- **Real-time collaboration at global scale** — public signalling has metadata leaks; private signalling needs a server.
+- **Regulated industries** — healthcare, finance, identity verification typically require maker-side logging.
 
-For these, the Zapp model is a poor fit. Better to pick a different architecture honestly than to fake the philosophy.
+Picking a different architecture honestly for these cases is better than faking the philosophy.
 
 ## See also
 
 - [[Zapp Manifesto]]
 - [[Zapp Data Formats]]
 - [[Zapp Cursor Rules]]
+- [[Zapp Anti-Patterns]]
+- [[When Zapps are Wrong]]
+- [[The Discovery Problem]]
 - [[Forking Over Modding]]

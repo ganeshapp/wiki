@@ -5,23 +5,32 @@ tags:
   - zapps
 ---
 
-**Zapps** (Zero Apps) is a software philosophy: tools that impose zero ongoing obligations on the user after install. No accounts, no tracking, no servers, no rent, no lock-in. The opposite of SaaS, in the literal sense.
+**Zapps** are tools (not services) that trade convenience for autonomy: they run primarily on the user's device, store state locally in open formats, and don't require an account or a maker-owned server. The opposite of SaaS, in the literal sense.
 
-The label was invented to give a name to the design pattern many indie developers were converging on, and to make it easier for AI coding assistants to follow when scaffolding new projects.
+The label was invented to give the design pattern a name so it can be built deliberately, and to make it easier for AI coding assistants to follow when scaffolding new projects.
+
+Neither model is universally right. Zapps are well-suited to single-user tools and small-group products. They are a poor fit for collaboration-heavy or notification-driven products. The pages below try to be honest about both ends.
 
 ## Start here
 
-- [[Zapp Manifesto]] — the full doctrine: why the philosophy matters now, the constraints, and the design patterns.
-- [[Zapp Architecture Patterns]] — the concrete engineering techniques (BYOK, Walkie-Talkie networking, Napkin URL state, Git-as-Backend).
-- [[Why Buy Once Software Died]] — the historical context for why the old model collapsed and why it might be viable again.
+- [[Zapp Manifesto]] — the philosophy and the autonomy/convenience trade-off it makes.
+- [[Zapp Architecture Patterns]] — the concrete engineering techniques (OAuth Device Flow, Napkin URL state, Walkie-Talkie networking, Git-as-Backend, OS-folder sync).
+- [[Why Buy Once Software Died]] — historical context for how the old "own it forever" model collapsed and why a modern revival is feasible.
+
+## When the pattern fits — and when it doesn't
+
+- [[When Zapps are Wrong]] — workloads, user populations, and operator situations where the model is a bad choice.
+- [[Zapp Anti-Patterns]] — common drift-back-to-SaaS mistakes builders make in good faith.
+- [[The Discovery Problem]] — the hardest unsolved problem in the philosophy: how anyone finds a Zapp in the first place.
 
 ## Reference
 
-- [[Zapp Data Formats]] — JSON, SQLite, GPX, OPML, iCalendar — the open formats a Zapp ecosystem can share.
+- [[Zapp Data Formats]] — JSON, SQLite, GPX, OPML, iCalendar — the open formats a Zapp ecosystem shares.
 - [[Forking Over Modding]] — why public-domain forks beat plugin systems for Zapps.
-- [[Public Domain Software Licenses]] — CC0 vs The Unlicense vs MIT, and why MIT requires attribution.
-- [[Zapp Cursor Rules]] — a ready-to-paste `.cursorrules` file enforcing the Zapp constraints for AI-assisted development.
+- [[Public Domain Software Licenses]] — MIT-0 and 0BSD as the legally cleanest "no strings attached" choices.
+- [[Zapp Cursor Rules]] — a ready-to-paste `.cursorrules` file for AI-assisted development.
 
 ## Inspiration
 
-- See [[Local-First Philosophy]] (the closest existing tradition Zapps draws from) and [[Why the Web Got Walled]] (the economic story of how we got here in the first place).
+- [[Local-First Philosophy]] — the closest existing tradition Zapps draws from, with honest differences.
+- [[Why the Web Got Walled]] — the economic story of how we got to a platform-dominated web in the first place.

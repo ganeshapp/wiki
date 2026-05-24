@@ -78,5 +78,6 @@ None of these alone bundles all the Zapp constraints, but each gets part of it. 
 
 - [[Zapp Manifesto]]
 - [[Zapp Architecture Patterns]]
+- [[When Zapps are Wrong]]
 - [[Why Buy Once Software Died]]
 - [[Why the Web Got Walled]]

@@ -26,7 +26,7 @@ A poker training Zapp could have a `mod_no_limit_holdem.json` that changes betti
 
 ### 3. Logic modding (JavaScript or WebAssembly plugins)
 
-The dangerous tier. Users load custom code that extends app behavior. Risk: a malicious mod can read the user's BYOK API keys from `localStorage` and exfiltrate them to a hacker's server.
+The dangerous tier. Users load custom code that extends app behavior. Risk: a malicious mod can read the user's OAuth tokens or other secrets from `localStorage` and exfiltrate them to a hacker's server.
 
 Solving this safely requires running mod code in **Web Workers or sandboxed iframes** with no access to the main DOM or localStorage. The core app passes data into the worker via a strict message API and reads back results, never giving the mod direct access to sensitive state.
 
@@ -67,10 +67,11 @@ For a single creator shipping many small Zapps, this is acceptable. For a single
 
 ## A note on licenses
 
-For forkability to work legally, the original code needs a permissive license. The MIT License technically requires preserving the copyright notice in every copy, which is a small but real friction point. The genuinely friction-free choice is a public-domain dedication like **CC0** or **The Unlicense** — see [[Public Domain Software Licenses]].
+For forkability to work legally, the original code needs a permissive license. The MIT License technically requires preserving the copyright notice in every copy, which is a small but real friction point. The legally cleanest "no strings attached" choices are **MIT-0** or **0BSD**, both of which are OSI-approved and designed specifically for software — see [[Public Domain Software Licenses]].
 
 ## See also
 
 - [[Zapp Manifesto]]
 - [[Zapp Architecture Patterns]]
+- [[Zapp Anti-Patterns]]
 - [[Public Domain Software Licenses]]

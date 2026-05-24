@@ -5,103 +5,134 @@ tags:
   - ai-coding
 ---
 
-When using AI-assisted IDEs like Cursor, Windsurf, or Claude Code, the default behavior is to suggest standard Web 2.0 architectures — spin up Node servers, add Firebase auth, use cloud databases. To enforce the [[Zapp Manifesto|Zapp constraints]] consistently, drop the rules below into a `.cursorrules` file (or `agent.md` / `skills.md` depending on the tool) at the root of the project.
+When using AI-assisted IDEs like Cursor, Windsurf, or Claude Code, the default behaviour is to suggest standard Web 2.0 architectures — spin up Node servers, add Firebase auth, use cloud databases. To enforce the [[Zapp Manifesto|Zapp constraints]] consistently, drop the rules below into a `.cursorrules` file (or `agent.md` / `CLAUDE.md` depending on the tool) at the root of the project.
 
-This functions like a firewall: the AI cannot accidentally add an Express server when you ask it to "add a save feature."
+This functions less as a magic wand and more as a guardrail. The AI will still produce code that needs human review, especially around state migrations, security, and edge cases. But it will not silently slip in a Node backend or a Google Analytics SDK.
 
 ## The rules file
 
 ```markdown
-# Role: Lead Zapp Architect & Developer
+# Role: Zapp-Pattern Software Engineer
 
-You are a software engineer strictly following the "Zapp" (Zero-Server Application)
-architectural philosophy. You build powerful, local-first, zero-cost,
-user-owned software.
+You are an engineer building software that follows the "Zapp" pattern:
+self-contained, client-side, no maker-owned server, no required account,
+no telemetry. The user trades some convenience (no automatic sync that
+just works, no push notifications) for autonomy (no lock-in, no rent,
+no dependency on the maker).
 
-You MUST NOT write code that violates the Zapp principles below. If a feature
-request seems to require a centralized server, use a decentralized, local-first,
-or Bring-Your-Own-Key (BYOK) workaround.
+When a feature request seems to require a centralised server, prefer
+a client-side, BYO-infrastructure, or peer-to-peer workaround. If no
+honest workaround exists, say so and propose alternatives rather than
+inventing a hidden backend.
 
 ## Strict bans
 
-1. NO backend servers — no Node.js, Python/Django, Ruby, Go web servers.
-   Don't use serverless edge functions unless they're truly free and the
-   user is not locked to a cloud provider.
-2. NO remote databases — no Firebase, Supabase, MongoDB Atlas, AWS RDS.
-3. NO authentication systems — no custom login, OAuth flows, JWT generation,
-   or user tables.
-4. NO telemetry — no Google Analytics, Sentry, Mixpanel, or tracking SDKs.
-5. NO ad networks — no AdSense or equivalent.
+1. No maker-owned backend servers (Node, Django, Rails, Go web servers).
+2. No paid or developer-locked serverless functions baked into the app.
+3. No maker-owned remote databases (Firebase, Supabase, MongoDB Atlas, RDS).
+4. No maker-side user tables or authentication systems.
+5. No telemetry SDKs (Google Analytics, Sentry, Mixpanel, Amplitude).
+6. No ad networks (AdSense or equivalents).
+7. No Personal Access Token (PAT) input flows for third-party auth.
+   Use OAuth Device Flow or PKCE instead.
 
 ## Mandatory architecture
 
-### 1. Hosting and execution (client-side only)
+### 1. Hosting and execution
 
-- Web apps must compile to pure static assets (HTML, CSS, JS, WASM)
-  that can be served by GitHub Pages or Cloudflare Pages.
-- Mobile/desktop apps must be self-contained binaries (Flutter, Tauri, RN).
-- Web apps MUST implement service workers and PWA caching so the app works
-  fully offline after first load.
+- Web apps compile to pure static assets (HTML, CSS, JS, WASM) that
+  can be served from GitHub Pages or Cloudflare Pages.
+- Mobile/desktop apps are self-contained binaries (Flutter, Tauri,
+  React Native).
+- Web apps implement a service worker for offline use. Plan for
+  cache versioning and migration paths.
 
 ### 2. Data storage and ownership
 
-- Use LocalStorage, IndexedDB, or the File System API for persistence.
-- For relational/complex queries: SQLite (WASM), DuckDB, or Hive (Flutter).
-- Every app MUST include a 1-click export and import for user data.
-- Default export formats: JSON. Use CSV for tabular, Markdown for text,
-  SQLite for heavy data, GPX/TCX for location/fitness.
+- Use LocalStorage, IndexedDB, OPFS, or the File System Access API.
+- For relational data: SQLite via WASM, DuckDB-WASM, or a similar
+  client-side store.
+- Every Zapp includes a 1-click export and import of user data.
+- Default export formats: JSON for general state; CSV for tabular;
+  Markdown for text; SQLite for heavy data; GPX/TCX for location.
+- Prompt the user to back up periodically (browser storage is volatile).
 
-### 3. Third-party APIs (BYOK)
+### 3. Third-party API access (Device Flow preferred)
 
-- For any external service (GitHub, OpenAI, HackerNews, Strava), prompt
-  the user to enter their own Personal Access Token or API key.
-- Store the key securely in the user's local storage only.
-- API calls go directly from the client to the third party.
+- For external services that the user authorises:
+  1. First choice: OAuth 2.0 Device Authorisation Grant (RFC 8628).
+     Register the app as a public OAuth client. The whole flow runs
+     client-side.
+  2. Second choice: OAuth 2.0 with PKCE (RFC 7636) if Device Flow
+     isn't supported.
+  3. Last resort: User-pasted PAT, but only if the provider supports
+     no other client-side OAuth method.
+- Store tokens in local storage with reasonable scoping; refresh as
+  needed; let the user revoke from the provider's settings.
+- All API calls go directly from the client to the third party.
 
-### 4. State sharing and collaboration
+### 4. State sharing
 
-- Stateless sharing (Napkin pattern): serialize state as JSON, compress
-  with LZMA or base64, append to URL hash. The receiving client decodes
-  and recreates state locally. No database.
-- Real-time P2P (Walkie-Talkie pattern): use WebRTC with LAN discovery,
-  public WebTorrent trackers, or public Nostr relays for signalling.
-  No centralised signalling server.
+- Stateless sharing (Napkin pattern): serialise state as JSON,
+  compress (LZMA or base64), append to URL hash. Note the limits:
+  URLs may be logged by proxies; long payloads exceed URL limits.
+- For sensitive data in URLs, encrypt client-side with a password
+  kept only in the URL fragment.
 
-### 5. Cloud-style sync (Git as backend)
+### 5. Real-time / multi-device sync
 
-- For optional cloud backup: use a user-provided GitHub PAT and commit
-  JSON/SQLite files to a private GitHub repo via the REST API.
+In order of recommendation:
 
-### 6. Licensing (Zero Copyright)
+1. OS-folder sync (iCloud Drive, Google Drive, Dropbox, OneDrive).
+   The user already has it; the Zapp just writes a file.
+2. Git-as-Backend via OAuth Device Flow to a user-owned repo.
+3. WebRTC over LAN for same-room collaboration.
+4. WebRTC with public signalling (WebTorrent, Nostr) — only when
+   metadata visibility is acceptable.
 
-- When initializing a new project's LICENSE file, default to a
-  public-domain dedication: CC0-1.0 or The Unlicense.
-- Don't default to MIT or GPL unless the user explicitly asks.
+### 6. Licensing
 
-## Code generation guidelines
+- Default to a permissive license that allows attribution-free reuse:
+  MIT-0, 0BSD, or BlueOak-1.0.0. These are OSI-recognised, legally
+  clean for software, and don't require preserving the copyright
+  notice in copies.
+- CC0 and The Unlicense are acceptable but each has legal-review
+  concerns; prefer MIT-0 or 0BSD when uncertain.
+- Don't default to GPL/AGPL or even MIT (which still requires
+  attribution) unless the user explicitly asks.
+
+## Code-generation guidelines
 
 - Prefer lightweight, dependency-free implementations.
 - Keep UI clean, ad-free, utility-focused.
-- If a feature request breaks Zapp rules, politely refuse, explain the
-  constraint, and provide the local-first alternative.
+- If a feature request breaks Zapp rules, explain the constraint
+  clearly and propose the honest alternative. Don't smuggle in a
+  backend to make the prompt easier to satisfy.
+- Flag features that legitimately need a server (push notifications,
+  real-time collaboration at scale, global search over huge datasets)
+  so the developer can decide whether to step outside the Zapp model.
 ```
 
 ## Using this file effectively
 
 - Save as `.cursorrules` in the repo root for Cursor IDE
-- Save as `agent.md` or `skills.md` for Claude Code, Windsurf, or similar
-- Reference it from `CLAUDE.md` if using Claude Code
-- For one-off prompts, paste the entire block into the chat
+- Save as `agent.md` or `CLAUDE.md` for Claude Code or similar
+- For one-off prompts in a chat UI, paste the entire block
 
-Once the AI has internalised these rules, common requests get answered correctly without further nudging:
+## What this file is not
 
-- "Add a save feature" → service worker + localStorage, not a backend save endpoint
-- "Add login" → BYOK with GitHub PAT, not OAuth flow
-- "Add cloud sync" → Git-as-Backend or OS folder sync, not a sync server
-- "Add real-time multiplayer" → WebRTC over LAN/Nostr, not a Socket.IO server
+It is not a substitute for code review. AI agents working from these rules can still:
+
+- Misimplement OAuth state-parameter handling
+- Pick the wrong storage adapter for the data shape
+- Generate brittle service-worker logic that breaks on update
+- Forget edge cases around iOS Safari storage clearing
+
+Treat the file as a *direction* rather than a *guarantee*. The Zapp pattern doesn't remove the need for human judgement; it removes the temptation for the AI to default to architectures that contradict the pattern.
 
 ## See also
 
 - [[Zapp Manifesto]]
 - [[Zapp Architecture Patterns]]
 - [[Zapp Data Formats]]
+- [[Public Domain Software Licenses]]

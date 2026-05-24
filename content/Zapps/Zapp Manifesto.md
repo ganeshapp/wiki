@@ -4,106 +4,130 @@ tags:
   - zapps
 ---
 
-## The current situation
+## The honest framing
 
-Making software tools used to be expensive. Servers, infrastructure, operations, and ongoing maintenance all cost real money. Because of that cost, most tools ended up following one of two paths:
+A Zapp is a piece of software that trades **convenience for autonomy**.
 
-1. **Free tools as services.** Give the tool away, but turn it into a service: require accounts, track behavior, collect data, sell insights or attention to someone else.
-2. **Paid SaaS tools.** Charge users continuously: lock data into proprietary systems, make leaving painful, keep adding features to justify rent.
+SaaS is the opposite trade. It hides labor — backups, sync, accounts, discovery, distribution — at the cost of putting the user in a long-term relationship with the maker. That relationship is the price the user pays, even when there is no monthly fee.
 
-In both cases the tool stopped being just a tool. It became a relationship, an obligation, a dependency. This wasn't malicious. For decades it was often the only way to survive.
+A Zapp inverts this: it asks the user to do a little more work themselves (occasional backups, sometimes explicit sync, sometimes manual sharing) in exchange for never having to depend on a maker, an account, an ongoing subscription, or a server that might go away.
 
-## Where this trend leads
+Neither model is universally right. SaaS makes sense for some workloads. Zapps make sense for others. The point of this section is to be clear about which is which, and to give the design pattern for the second one a name and a working spec so it can be built deliberately rather than by accident.
 
-The justifications for these patterns are weakening fast. With AI dramatically reducing the cost of building software, distribution effectively free, and modern static hosting (GitHub Pages, Cloudflare Pages) absorbing the long-tail of serving cost:
+## Where the cost moved
 
-- Harvesting user data is no longer necessary to subsidise development
-- Forcing accounts is no longer needed to recoup infrastructure costs
-- Charging ongoing rent for a finished tool is no longer the only way to recover development effort
+For most of the last two decades, the cost structure of running software pushed almost everything toward SaaS:
 
-But most tools still default to these patterns, because the patterns are familiar. Without a deliberate shift, the trajectory is more services pretending to be tools, more data collection with less justification, more user lock-in by default.
+- Servers cost real money
+- Distribution required infrastructure
+- Maintenance required ongoing engineering time
 
-## The idea behind Zero Apps
+Recouping those costs required one of two patterns: advertising and tracking, or subscription rent. These weren't malicious — they were the only way to keep the lights on.
 
-**Zero Apps**, or **Zapps**, start from a simple question:
+What's changed:
 
-> What would a software tool look like if it imposed zero ongoing obligations on the user?
+- **Static hosting absorbed most serving costs** for small-to-medium-traffic apps (GitHub Pages, Cloudflare Pages, Netlify free tiers).
+- **Client-side databases got serious** (SQLite via WebAssembly, IndexedDB, OPFS).
+- **AI tooling reduced the per-feature engineering cost**, even after accounting for subscription costs of the tools themselves.
 
-A Zapp is not anti-cloud, anti-business, or anti-modern. It is software that refuses to create dependency where none is required.
+None of this means cost has gone to zero. Maintenance, security patching, API churn, and bug fixing still cost human time. AI subscriptions cost real money. Static hosts have abuse-policy limits.
 
-## Core idea
+But for a class of single-purpose tools where the user's data isn't actually shared with anyone else, the *necessity* of a SaaS architecture is weaker than it used to be. The Zapp pattern is what it looks like to build for that class deliberately.
 
-A Zapp is a tool, not a service.
+## What a Zapp actually is
 
-It is:
+A Zapp is a self-contained tool that runs primarily on the user's device, stores its state locally in open formats, and does not require an account or a server owned by its maker.
 
-- Complete at install time
-- Usable without permission
-- Blind to its users
+Concrete constraints, with the rationale for each:
 
-The app may have state. The user may have identity. But the maker has **zero knowledge** of either.
+**Local state in open formats.** The user can export, edit, and import their data without the app. The format should be human-readable wherever practical (JSON, Markdown, SQLite, CSV, GPX, iCalendar). Internal storage can be optimised; the *exit door* must be universal.
 
-## The Six Zeros
+*Why:* Without this, every other property of the philosophy collapses. Lock-in is what makes maker-blindness, finishedness, and forkability impossible.
 
-These aren't features. They are design constraints.
+**No required maker-owned server.** A Zapp may *talk* to third-party services the user has authorised, but the maker doesn't run a backend that the app needs to function.
 
-1. **Zero accounts** — No sign-up, no login, no identity known to the maker.
-2. **Zero observation** — No tracking, analytics, telemetry, crash reporting, or behavior logging.
-3. **Zero backend dependency** — No required servers to function.
-4. **Zero network dependence** — Works fully offline after install.
-5. **Zero rent** — No ads, no subscriptions, no attention extraction. Voluntary donations only.
-6. **Zero lock-in** — Data is exportable to open, human-readable formats. Users own their state.
+*Why:* Servers create the rent loop. Even free servers create maintenance debt that justifies later monetisation.
 
-If removing the developer's servers breaks the app, it is not a Zapp.
+**No required account on the maker's side.** Identity, if needed, lives on the user's device or in their own infrastructure (a GitHub account they already have, a cloud-storage folder they already sync). The maker doesn't run a user table.
 
-## Why these constraints matter
+*Why:* User tables become the asset. Acquisitions and policy changes flow through them. A Zapp avoids creating one in the first place.
 
-Constraints force better design.
+**Works offline.** A web Zapp must use a service worker so that after the first load, the app keeps working without network access.
 
-- When accounts are removed, identity must be rethought.
-- When servers are removed, state must become explicit.
-- When tracking is removed, incentives become honest.
+*Why:* Network availability is the silent dependency that turns tools into services.
 
-The question shifts from "how do we keep users and monetize attention?" to "how do we make a good tool?"
+**No telemetry, analytics, or hidden network calls.** Privacy by structure, not by promise. There is no analytics SDK to misconfigure.
 
-## What Zapps are not
+*Why:* The cheapest way to honour a privacy policy is to not have the data in the first place.
 
-- Not minimal for the sake of minimalism
-- Not toys or demos
-- Not anti-updates or anti-payments
-- Not anti-identity (Zapps are *maker-blind*, not user-less)
+**Permissive license.** Default to a public-domain dedication or a one-line attribution-free license so that forks are trivially legal. See [[Public Domain Software Licenses]].
 
-A Zapp can be sophisticated, beautiful, and feature-rich. It just refuses to require a relationship after install.
+*Why:* If the maker disappears, anyone should be able to legally continue the project.
 
-## Why this matters now
+## What the user gives up
 
-As the cost of building software approaches zero, the cost that remains is increasingly imposed on the user: through surveillance, lock-in, and rent-seeking. Zapps argue that this cost is no longer inevitable.
+Honest list. Anyone considering whether to build (or use) a Zapp should know what they are accepting:
 
-We can build tools that:
+- **Sync that just works.** Multi-device sync in a Zapp typically means OS-folder sync (iCloud Drive, Google Drive, Dropbox) or per-user infrastructure (a private GitHub repo via [[Zapp Architecture Patterns|OAuth Device Flow]]). It is rarely as frictionless as Notion or Google Docs.
+- **Push notifications.** Reliable mobile push requires a server holding device tokens. A Zapp can't really do this without giving up the no-server property.
+- **Real-time collaboration at scale.** Possible via WebRTC and decentralised signalling, but never as smooth as Google Docs.
+- **Discovery.** Without ads, SEO budgets, or platform algorithms pushing the app to users, finding the right Zapp is harder. See [[The Discovery Problem]].
+- **Convenience defaults.** Things like "your data follows you to the new phone" require explicit setup steps.
 
-- Respect users by default
-- End cleanly when the user is done
-- Work without permission
-- Remain useful even if the maker disappears
+If those losses are dealbreakers for the user's actual use case, a Zapp is the wrong choice and that's fine. See [[When Zapps are Wrong]] for the full catalogue of cases where the model doesn't fit.
 
-Not everything needs to be a service. Some things can just be tools again.
+## What the user gains
+
+Equally honest list:
+
+- **Continuity.** When the maker disappears, the Zapp keeps working. Forks are legal and cheap.
+- **Structural privacy.** No data to leak because no data leaves the device.
+- **No surprise billing.** The model is set at install, not at the maker's next funding round.
+- **No forced relationship.** The user can stop using the Zapp without losing access to their data, because the data was never hostage.
 
 ## A simple test
 
-If the app:
+If the question "what happens if the maker disappears tomorrow?" has the answer "the app keeps working and the user keeps their data," it might be a Zapp.
 
-- Needs to know who the user is
-- Needs to watch how it's used
-- Needs a server to stay alive
+If the answer is "the user is locked out," it's not.
 
-It is not a Zapp.
+## What Zapps are not
 
-If it works, silently, on its own — it probably is.
+To pre-empt the reductive readings:
+
+- Not minimalism for its own sake. A Zapp can be feature-rich.
+- Not anti-payment. A Zapp can be paid once. It just doesn't extract rent.
+- Not anti-identity. The user can have an identity; the *maker* just doesn't store it.
+- Not anti-sync. A Zapp can sync via the user's own infrastructure.
+- Not anti-modern-web. A Zapp uses service workers, WASM, modern browser APIs.
+
+The pattern is specifically about *not creating a maker-side relationship that the user has to maintain.* Everything else is style.
+
+## When this pattern fits
+
+Roughly:
+
+- Single-user tools (calculators, planners, note-takers, journal apps, fitness loggers)
+- Reference tools (dictionaries, handbooks, education apps)
+- Configuration and design tools where state is mostly local (mockup tools, regex testers, formatters)
+- API client wrappers where the actual data lives in someone else's system (Hacker News readers, RSS readers)
+
+## When it doesn't
+
+- Collaboration-heavy products with real-time co-editing
+- Workloads dependent on push notifications
+- Anything regulated where the operator needs to retain logs (healthcare, finance, identity verification)
+- Markets where users genuinely value convenience over autonomy (the majority of mainstream consumer software)
+
+A full list with reasoning is in [[When Zapps are Wrong]].
 
 ## See also
 
 - [[Zapp Architecture Patterns]]
 - [[Zapp Data Formats]]
+- [[Zapp Anti-Patterns]]
+- [[When Zapps are Wrong]]
+- [[The Discovery Problem]]
 - [[Why Buy Once Software Died]]
 - [[Forking Over Modding]]
 - [[Public Domain Software Licenses]]

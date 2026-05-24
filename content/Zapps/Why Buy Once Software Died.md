@@ -138,5 +138,7 @@ Zapps aren't nostalgia. They're a recognition that for many tools, the relations
 ## See also
 
 - [[Zapp Manifesto]]
+- [[When Zapps are Wrong]]
+- [[The Discovery Problem]]
 - [[Local-First Philosophy]]
 - [[Why the Web Got Walled]]

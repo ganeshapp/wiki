@@ -79,4 +79,5 @@ If a Zapp uses Hive or IndexedDB internally for performance, it must still expos
 
 - [[Zapp Manifesto]]
 - [[Zapp Architecture Patterns]]
+- [[Zapp Anti-Patterns]]
 - [[Indoor Virtual Run Data Sources]]
