@@ -97,3 +97,4 @@ A practical default: vegetables and fruit at every meal, fatty fish 2–3 times 
 - [[Zone 2 Training]]
 - [[Lifestyle Running]]
 - [[Running Diet and Nutrition]]
+- [[Longevity for Lean Endurance Athletes Past 40]] — why VO2 max is the single highest-leverage longevity intervention for endurance athletes

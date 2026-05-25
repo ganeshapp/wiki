@@ -6,12 +6,17 @@ The purpose of this wiki is purely to collect all the info when I go on one of t
 
 ## Sections
 
-### Endurance and strength
+### Endurance, strength, and health
 
 - [[running/Long Distance Running|Running]] — treadmill workouts, marathon pace zones, hill training, VO2 max, lifestyle running
 - [[cycling/index|Cycling]] — power benchmarks, smart trainers, FTMS protocol, power meters
 - [[climbing/index|Climbing]] — V7 plateau, hangboarding, climbing-specific leg work
 - [[calisthenics/index|Calisthenics]] — progressions, planche, handstand practice
+- [[longevity/index|Longevity]] — specific protocols for the lean endurance-athlete phenotype past 40
+
+### Hobbies and learning
+
+- [[music/index|Music]] — picking and starting a first instrument as an adult
 
 ### Travel and living
 
